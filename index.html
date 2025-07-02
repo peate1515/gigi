@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pool de Gigi – Suivi en direct</title>
-    <!-- Pixel‑art Google Font -->
+    <!-- Pixel-art Google Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
     <style>
@@ -44,7 +44,7 @@
         box-shadow: 0 0 0 6px var(--melon-seed);
         text-align: center;
       }
-      .small{background:var(--melon-lightgreen);border-color:var(--melon-pink);} /* 2e place */
+      .small{background:var(--melon-lightgreen);border-color:var(--melon-pink);} /* 2e place & file d'attente */
       .winner{background:var(--melon-pink);color:var(--melon-lightpink);border-color:var(--melon-green);} /* gagnant */
       .eliminated{background:#fafafa;border-color:var(--melon-seed);color:var(--melon-seed);} /* passés */
       #tablesContainer{display:none;}
@@ -57,6 +57,7 @@
     <div id="currentTime" class="card"></div>
     <div id="winner" class="card winner"></div>
     <div id="eliminatedCard" class="card eliminated"></div>
+    <div id="queueCard" class="card small"></div>
 
     <script>
       // === Liste des prédictions ===
@@ -65,7 +66,7 @@
         {name:"doudou",datetime:"2025-06-25T23:59"},
         {name:"Étienne",datetime:"2025-06-28T23:59"},
         {name:"Annie",datetime:"2025-06-29T23:59"},
-        {name:"Marie‑Soleil",datetime:"2025-06-30T23:59"},
+        {name:"Marie-Soleil",datetime:"2025-06-30T23:59"},
         {name:"Olivier",datetime:"2025-06-30T11:07"},
         {name:"Pierre",datetime:"2025-07-01T23:59"},
         {name:"Eve",datetime:"2025-07-02T23:59"},
@@ -75,44 +76,42 @@
         {name:"Pa",datetime:"2025-07-04T23:59"},
         {name:"Sylvie",datetime:"2025-07-05T23:59"},
         {name:"Mona",datetime:"2025-07-06T17:00"},
-        {name:"LM‑Charles",datetime:"2025-07-06T21:15"},
+        {name:"LM-Charles",datetime:"2025-07-06T21:15"},
         {name:"Rick",datetime:"2025-07-07T23:59"},
         {name:"Renaud",datetime:"2025-07-07T03:00"},
         {name:"Raphael",datetime:"2025-07-07T07:00"},
         {name:"Guylaine",datetime:"2025-07-12T23:59"},
       ];
 
-      // === Formateurs de date ===
       const fmtClock=new Intl.DateTimeFormat("fr-CA",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-
-      // === Aides ===
       const decorate=a=>a.map(e=>({...e,dateObj:new Date(e.datetime)}));
       const diffHuman=(t,b=new Date())=>{const ms=Math.abs(t-b);const m=Math.floor(ms/60000);const d=Math.floor(m/1440);const h=Math.floor((m%1440)/60);const min=m%60;return[d&&`${d}j`,h&&`${h}h`,min&&`${min}m`].filter(Boolean).join(" ");};
 
       const upcoming=()=>decorate(events).filter(e=>e.dateObj>new Date()).sort((a,b)=>a.dateObj-b.dateObj);
       const past=()=>decorate(events).filter(e=>e.dateObj<=new Date()).sort((a,b)=>b.dateObj-a.dateObj);
 
-      // === Rendu ===
       function render(){
         const now=new Date();
         document.getElementById("currentTime").textContent=`Heure actuelle : ${fmtClock.format(now)}`;
 
-        // gagnant et 2e place = plus proches à venir
         const upArr=upcoming();
         const winner=upArr[0];
         const second=upArr[1];
 
-        document.getElementById("winner").innerHTML=winner?
-          `<div>En Tête</div><div>${winner.name}</div><div>Temps restant : ${diffHuman(winner.dateObj)}</div>`
-          :"Aucun gagnant (pas de date future).";
+        document.getElementById("winner").innerHTML=winner?`<div>En Tête</div><div>${winner.name}</div><div>Temps restant : ${diffHuman(winner.dateObj)}</div>`:"Aucun gagnant (pas de date future).";
+        document.getElementById("secondPlace").innerHTML=second?`<div>Prochain(e)</div><div>${second.name}</div><div>Temps restant : ${diffHuman(second.dateObj)}</div>`:"Pas encore de 2e place.";
 
-        document.getElementById("secondPlace").innerHTML=second?
-          `<div>Prochain(e)</div><div>${second.name}</div><div>Temps restant : ${diffHuman(second.dateObj)}</div>`
-          :"Pas encore de 2e place.";
-
-        // éliminés = passés
         const eliminatedNames=past().map(e=>e.name);
         document.getElementById("eliminatedCard").textContent=eliminatedNames.length?`Éliminés : ${eliminatedNames.join(", ")}`:"Aucun éliminé pour l'instant.";
+
+        // Afficher positions 3 à 5
+        const queue=upArr.slice(2,5); // indices 2,3,4 → positions 3,4,5
+        if(queue.length){
+          const listHTML=queue.map((e,i)=>`${i+3}: ${e.name}`).join("<br>");
+          document.getElementById("queueCard").innerHTML=`<div>À venir</div>${listHTML}`;
+        }else{
+          document.getElementById("queueCard").textContent="Pas d'autres prédictions.";
+        }
       }
 
       document.addEventListener("DOMContentLoaded",()=>{render();setInterval(render,1000);});
