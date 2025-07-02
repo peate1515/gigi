@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pool de Gigi – Suivi en direct</title>
-    <!-- Pixel-art Google Font -->
+    <!-- Pixel‑art Google Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
     <style>
@@ -67,6 +67,7 @@
         {name:"Étienne",datetime:"2025-06-28T23:59"},
         {name:"Annie",datetime:"2025-06-29T23:59"},
         {name:"Marie-Soleil",datetime:"2025-06-30T23:59"},
+        {name:"Éric",datetime:"2025-06-30T23:59"},
         {name:"Olivier",datetime:"2025-06-30T11:07"},
         {name:"Pierre",datetime:"2025-07-01T23:59"},
         {name:"Eve",datetime:"2025-07-02T23:59"},
@@ -105,7 +106,7 @@
         document.getElementById("eliminatedCard").textContent=eliminatedNames.length?`Éliminés : ${eliminatedNames.join(", ")}`:"Aucun éliminé pour l'instant.";
 
         // Afficher positions 3 à 5
-        const queue=upArr.slice(2,5); // indices 2,3,4 → positions 3,4,5
+        const queue=upArr.slice(2,5); // indices 2,3,4
         if(queue.length){
           const listHTML=queue.map((e,i)=>`${i+3}: ${e.name}`).join("<br>");
           document.getElementById("queueCard").innerHTML=`<div>À venir</div>${listHTML}`;
