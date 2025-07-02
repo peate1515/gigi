@@ -38,10 +38,11 @@
         margin: 1rem auto;
         padding: 1.25rem;
         max-width: 600px;
-        line-height: 1.4;
+        line-height: 1.6;
         background: var(--melon-lightpink);
         border: 6px solid var(--melon-green);
         box-shadow: 0 0 0 6px var(--melon-seed);
+        text-align: center;
       }
       .small{background:var(--melon-lightgreen);border-color:var(--melon-pink);} /* 2e place */
       .winner{background:var(--melon-pink);color:var(--melon-lightpink);border-color:var(--melon-green);} /* gagnant */
@@ -82,7 +83,6 @@
       ];
 
       // === Formateurs de date ===
-      const fmtDateTime=new Intl.DateTimeFormat("fr-CA",{weekday:"short",year:"numeric",month:"short",day:"2-digit",hour:"2-digit",minute:"2-digit"});
       const fmtClock=new Intl.DateTimeFormat("fr-CA",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 
       // === Aides ===
@@ -102,9 +102,13 @@
         const winner=upArr[0];
         const second=upArr[1];
 
-        document.getElementById("winner").textContent=winner?`En Tête  : ${winner.name} – ${fmtDateTime.format(winner.dateObj)} (Temps Restant ${diffHuman(winner.dateObj)})`:"Aucun gagnant (pas de date future).";
+        document.getElementById("winner").innerHTML=winner?
+          `<div>En Tête</div><div>${winner.name}</div><div>Temps restant : ${diffHuman(winner.dateObj)}</div>`
+          :"Aucun gagnant (pas de date future).";
 
-        document.getElementById("secondPlace").textContent=second?`Prochain(e) : ${second.name} – ${fmtDateTime.format(second.dateObj)} (dans ${diffHuman(second.dateObj)})`:"Pas encore de 2e place.";
+        document.getElementById("secondPlace").innerHTML=second?
+          `<div>Prochain(e)</div><div>${second.name}</div><div>Temps restant : ${diffHuman(second.dateObj)}</div>`
+          :"Pas encore de 2e place.";
 
         // éliminés = passés
         const eliminatedNames=past().map(e=>e.name);
