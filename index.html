@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pool de naissance – Suivi pixel art</title>
+    <!-- Pixel‑art Google Font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --melon-pink: #ff6b81;
+        --melon-lightpink: #ffe1e6;
+        --melon-green: #2ecc71;
+        --melon-lightgreen: #a6f5c5;
+        --melon-seed: #111;
+      }
+      /* Global reset */
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 2rem 1rem;
+        font-family: "Press Start 2P", monospace;
+        background: repeating-linear-gradient(
+            45deg,
+            var(--melon-lightgreen) 0 8px,
+            var(--melon-pink) 8px 16px
+          );
+        color: var(--melon-seed);
+        image-rendering: pixelated;
+      }
+      h1 {
+        font-size: 1.25rem;
+        text-align: center;
+        margin: 0 0 2rem;
+        padding: 0.5rem 1rem;
+        background: var(--melon-seed);
+        color: var(--melon-lightpink);
+        border: 4px solid var(--melon-green);
+        display: inline-block;
+      }
+      /* Card base */
+      .card {
+        margin: 1rem auto;
+        padding: 1.25rem;
+        max-width: 600px;
+        line-height: 1.4;
+        background: var(--melon-lightpink);
+        border: 6px solid var(--melon-green);
+        box-shadow: 0 0 0 6px var(--melon-seed);
+      }
+      /* Variants */
+      .small {
+        background: var(--melon-lightgreen);
+        border-color: var(--melon-pink);
+      }
+      .winner {
+        background: var(--melon-pink);
+        color: var(--melon-lightpink);
+        border-color: var(--melon-green);
+      }
+      .eliminated {
+        background: #fafafa;
+        border-color: var(--melon-seed);
+        color: var(--melon-seed);
+      }
+      /* Hide tables by default */
+      #tablesContainer { display: none; }
+    </style>
+  </head>
+  <body>
+    <h1>Pool de naissance – Suivi en direct</h1>
+
+    <div id="topUpcoming" class="card small"></div>
+    <div id="currentTime" class="card"></div>
+    <div id="leader" class="card winner"></div>
+    <div id="eliminatedCard" class="card eliminated"></div>
+
+    <script>
+      // === Prédictions ===
+      const events = [
+        { name: "Mely", datetime: "2025-06-23T23:59" },
+        { name: "doudou", datetime: "2025-06-25T23:59" },
+        { name: "Étienne", datetime: "2025-06-28T23:59" },
+        { name: "Annie", datetime: "2025-06-29T23:59" },
+        { name: "Marie‑Soleil", datetime: "2025-06-30T23:59" },
+        { name: "Olivier", datetime: "2025-06-30T11:07" },
+        { name: "Pierre", datetime: "2025-07-01T23:59" },
+        { name: "Eve", datetime: "2025-07-02T23:59" },
+        { name: "Mado", datetime: "2025-07-02T13:00" },
+        { name: "Kass", datetime: "2025-07-03T11:00" },
+        { name: "Arianne", datetime: "2025-07-03T21:00" },
+        { name: "Pa", datetime: "2025-07-04T23:59" },
+        { name: "Sylvie", datetime: "2025-07-05T23:59" },
+        { name: "Mona", datetime: "2025-07-06T17:00" },
+        { name: "LM‑Charles", datetime: "2025-07-06T21:15" },
+        { name: "Rick", datetime: "2025-07-07T23:59" },
+        { name: "Renaud", datetime: "2025-07-07T03:00" },
+        { name: "Raphael", datetime: "2025-07-07T07:00" },
+        { name: "Guylaine", datetime: "2025-07-12T23:59" },
+      ];
+
+      // === Intl formatters ===
+      const fmtDateTime = new Intl.DateTimeFormat("fr-CA", {
+        weekday: "short", year: "numeric", month: "short", day: "2-digit",
+        hour: "2-digit", minute: "2-digit",
+      });
+      const fmtClock = new Intl.DateTimeFormat("fr-CA", {
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+      });
+
+      // === Helpers ===
+      const decorate = arr => arr.map(e => ({ ...e, dateObj: new Date(e.datetime) }));
+      const diffHuman = (target, base = new Date()) => {
+        const ms = Math.abs(target - base);
+        const m = Math.floor(ms / 60000);
+        const d = Math.floor(m / 1440);
+        const h = Math.floor((m % 1440) / 60);
+        const min = m % 60;
+        return [d && `${d}j`, h && `${h}h`, min && `${min}m`].filter(Boolean).join(" ");
+      };
+
+      const upcoming = () => decorate(events).filter(e => e.dateObj > new Date()).sort((a, b) => a.dateObj - b.dateObj);
+      const past = () => decorate(events).filter(e => e.dateObj <= new Date()).sort((a, b) => b.dateObj - a.dateObj);
+
+      // === Rendering ===
+      function render() {
+        const now = new Date();
+        document.getElementById("currentTime").textContent = `Heure actuelle : ${fmtClock.format(now)}`;
+
+        const next = upcoming()[0];
+        document.getElementById("topUpcoming").textContent = next
+          ? `Prochaine : ${next.name} – ${fmtDateTime.format(next.dateObj)} (dans ${diffHuman(next.dateObj)})`
+          : "Plus de prédictions futures.";
+
+        const leader = past()[0];
+        document.getElementById("leader").textContent = leader
+          ? `En tête : ${leader.name} – ${fmtDateTime.format(leader.dateObj)} (écart ${diffHuman(leader.dateObj)})`
+          : "Aucune prédiction passée.";
+
+        const eliminatedNames = past().slice(1).map(e => e.name);
+        document.getElementById("eliminatedCard").textContent = eliminatedNames.length
+          ? `Éliminés : ${eliminatedNames.join(", ")}`
+          : "Aucun éliminé pour l'instant.";
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        render();
+        setInterval(render, 1_000);
+      });
+    </script>
+
+    <!-- Section détaillée masquée (optionnelle) -->
+    <div id="tablesContainer"></div>
+  </body>
+</html>
