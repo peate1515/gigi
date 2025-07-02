@@ -104,7 +104,7 @@
 
         document.getElementById("winner").textContent=winner?`Gagnant : ${winner.name} – ${fmtDateTime.format(winner.dateObj)} (dans ${diffHuman(winner.dateObj)})`:"Aucun gagnant (pas de date future).";
 
-        document.getElementById("secondPlace").textContent=second?`2e place : ${second.name} – ${fmtDateTime.format(second.dateObj)} (dans ${diffHuman(second.dateObj)})`:"Pas encore de 2e place.";
+        document.getElementById("secondPlace").textContent=second?`Prochaine : ${second.name} – ${fmtDateTime.format(second.dateObj)} (dans ${diffHuman(second.dateObj)})`:"Pas encore de 2e place.";
 
         // éliminés = passés
         const eliminatedNames=past().map(e=>e.name);
