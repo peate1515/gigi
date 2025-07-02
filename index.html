@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pool de Gigi – Suivi en direct</title>
-    <!-- Pixel‑art Google Font -->
+    <!-- Pixel-art Google Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
     <style>
@@ -85,6 +85,8 @@
       ];
 
       const fmtClock=new Intl.DateTimeFormat("fr-CA",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      const fmtShort=new Intl.DateTimeFormat("fr-CA",{month:"short",day:"2-digit"});
+
       const decorate=a=>a.map(e=>({...e,dateObj:new Date(e.datetime)}));
       const diffHuman=(t,b=new Date())=>{const ms=Math.abs(t-b);const m=Math.floor(ms/60000);const d=Math.floor(m/1440);const h=Math.floor((m%1440)/60);const min=m%60;return[d&&`${d}j`,h&&`${h}h`,min&&`${min}m`].filter(Boolean).join(" ");};
 
@@ -99,17 +101,17 @@
         const winner=upArr[0];
         const second=upArr[1];
 
-        document.getElementById("winner").innerHTML=winner?`<div>En Tête</div><div>${winner.name}</div><div>Temps restant : ${diffHuman(winner.dateObj)}</div>`:"Aucun gagnant (pas de date future).";
-        document.getElementById("secondPlace").innerHTML=second?`<div>Prochain(e)</div><div>${second.name}</div><div>Temps restant : ${diffHuman(second.dateObj)}</div>`:"Pas encore de 2e place.";
+        document.getElementById("winner").innerHTML=winner?`<div>En Tête</div><div>${winner.name}</div><div>Temps restant : ${diffHuman(winner.dateObj)}</div>`:"Aucun gagnant (pas de date future).";
+        document.getElementById("secondPlace").innerHTML=second?`<div>Prochain(e)</div><div>${second.name}</div><div>Temps restant : ${diffHuman(second.dateObj)}</div>`:"Pas encore de 2e place.";
 
         const eliminatedNames=past().map(e=>e.name);
         document.getElementById("eliminatedCard").textContent=eliminatedNames.length?`Éliminés : ${eliminatedNames.join(", ")}`:"Aucun éliminé pour l'instant.";
 
-        // Afficher positions 3 à 5
-        const queue=upArr.slice(2,5); // indices 2,3,4
+        // Afficher toutes les positions après la 2e (3+)
+        const queue=upArr.slice(2);
         if(queue.length){
-          const listHTML=queue.map((e,i)=>`${i+3}: ${e.name}`).join("<br>");
-          document.getElementById("queueCard").innerHTML=`<div>À venir</div>${listHTML}`;
+          const listHTML=queue.map((e,i)=>`${i+3}: ${e.name} – ${fmtShort.format(e.dateObj)}`).join("<br>");
+          document.getElementById("queueCard").innerHTML=`<div>À venir</div>${listHTML}`;
         }else{
           document.getElementById("queueCard").textContent="Pas d'autres prédictions.";
         }
