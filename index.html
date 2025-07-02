@@ -102,7 +102,7 @@
         const winner=upArr[0];
         const second=upArr[1];
 
-        document.getElementById("winner").textContent=winner?`Gagnant(e) : ${winner.name} – ${fmtDateTime.format(winner.dateObj)} (dans ${diffHuman(winner.dateObj)})`:"Aucun gagnant (pas de date future).";
+        document.getElementById("winner").textContent=winner?`En Tête présentement : ${winner.name} – ${fmtDateTime.format(winner.dateObj)} (dans ${diffHuman(winner.dateObj)})`:"Aucun gagnant (pas de date future).";
 
         document.getElementById("secondPlace").textContent=second?`Prochain(e) : ${second.name} – ${fmtDateTime.format(second.dateObj)} (dans ${diffHuman(second.dateObj)})`:"Pas encore de 2e place.";
 
